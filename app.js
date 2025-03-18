@@ -18,6 +18,9 @@ app.use(adminRoute)
 app.use(postRoute)
 app.use(commentRoute)
 app.use(userRoute)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 // console.log(userRoute)
 app.listen(port, (err) => {
   if (err) return console.log(err);
