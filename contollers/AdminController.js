@@ -1,6 +1,4 @@
 const Admin = require("../models/AdminModel");
-const { use } = require("../routes/AdminRoute");
-
 const createAdmin = async (req, res) => {
   try {
     const { fullname, password, email, phone } = req.body;
