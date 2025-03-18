@@ -14,10 +14,10 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 Db_Connection();
 app.use(express.json());
 app.use(cors());
-app.use(userRoute)
 app.use(adminRoute)
 app.use(postRoute)
 app.use(commentRoute)
+app.use(userRoute)
 app.listen(port, (err) => {
   if (err) return console.log(err);
   console.log(`Server Started Successfully on port ${port}`);
