@@ -3,9 +3,9 @@ const cors = require('cors');
 const port = 4000;
 const path = require('path')
 const userRoute = require('./routes/UserRoutes')
-const adminRoute = require('../backend/routes/AdminRoute')
-const postRoute = require('../backend/routes/PostRoute')
-const commentRoute = require('../backend/routes/CommentRoute')
+const adminRoute = require('./routes/AdminRoute')
+const postRoute = require('./routes/PostRoute')
+const commentRoute = require('./routes/CommentRoute')
 
 const Db_Connection = require('./DB_Connection'); 
 const app = express(); 
