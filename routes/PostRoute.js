@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const {createPost, getAllPost, getSinglePost, getSingleUserPost, deletePost, updatePost, likePost, DeleteLike, getAllLikes, getAllPostLikes} = require('../contollers/PostController')
+const {createPost, getAllPost, getSinglePost, getSingleUserPost, deletePost, updatePost, likePost, DeleteLike, getAllPostLikes} = require('../contollers/PostController')
 const uploads = require('../middlewares/FileImage')
 
 router.post('/api/post/:userId', uploads.single('img'), createPost)

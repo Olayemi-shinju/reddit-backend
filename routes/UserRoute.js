@@ -1,20 +1,13 @@
-const express = require('express');
-const router = express.Router();
-const {
-  createUser,
-  loginUser,
-  getAllUsers,
-  updateUser,
-  deleteUser,
-  getSingleUser,
-} = require('../controllers/UsersController');
-const uploads = require('../../backend/middlewares/FileImage');
+const express = require('express')
+const router = express.Router()
+const {createUser, LoginUser, getAllUser, updateUser, deleteUser, getSingleUser} = require('../contollers/UsersContoller')
+const uploads = require('../../backend/middlewares/FileImage')
+router.post('/api/user', createUser)
+router.post('/api/user/login', LoginUser)
+router.get('/api/users', getAllUser)
+router.put('/api/:id', uploads.single('avatar'), updateUser)
+router.delete('/api/user/:id', deleteUser)
+router.get('/api/user/get/:id', getSingleUser)
 
-router.post('/api/users', createUser);
-router.post('/api/users/login', loginUser);
-router.get('/api/users', getAllUsers);
-router.put('/api/users/:id', uploads.single('avatar'), updateUser);
-router.delete('/api/users/:id', deleteUser);
-router.get('/api/users/get/:id', getSingleUser);
 
-module.exports = router;
+module.exports = router
