@@ -18,7 +18,6 @@ app.use(adminRoute)
 app.use(postRoute)
 app.use(commentRoute)
 app.use(userRoute)
-
 // console.log(userRoute)
 app.listen(port, (err) => {
   if (err) return console.log(err);
