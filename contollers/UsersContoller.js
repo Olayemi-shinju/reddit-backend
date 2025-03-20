@@ -26,7 +26,7 @@ const LoginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email, password });
-    if (!user)
+    if (!user || !(await user.comparePassword(password)))
       return res.send({
         status: 404,
         msg: "Invalid Email Or Password",
