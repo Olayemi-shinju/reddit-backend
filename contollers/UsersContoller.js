@@ -25,7 +25,7 @@ const createUser = async (req, res) => {
 const LoginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email, password });
+    const user = await User.findOne({ email});
     if (!user || !(await user.comparePassword(password)))
       return res.send({
         status: 404,
