@@ -25,9 +25,8 @@ const createPost = async (req, res) => {
     if (check == false) {
       return res.send({ status: 405, msg: "Either Body or Image Required" });
     }
-
-    if (req.file) {
-      img = req.file.path;
+    if (req.files && req.files.img) {
+      img = req.files.img[0].path; // Cloudinary stores the URL in `path`
     }
 
     const user = await User.findById(userId);

@@ -1,29 +1,116 @@
-const multer = require("multer");
+// const multer = require("multer");
 
-const file_storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads");
-  },
-  filename: (req, file, cb) => {
-    let f_name = Date.now() + "_" + file.originalname;
-    cb(null, f_name);
+// const file_storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "uploads");
+//   },
+//   filename: (req, file, cb) => {
+//     let f_name = Date.now() + "_" + file.originalname;
+//     cb(null, f_name);
+//   },
+// });
+
+// const file_type = (req, file, cb) => {
+//   if (
+//     file.mimetype == "image/png" ||
+//     file.mimetype == "image/jpg" ||
+//     file.mimetype == "image/jpeg" ||
+//     file.mimetype == "image/webp" ||
+//     file.mimetype == "image/svg"
+//   ) {
+//     cb(null, true);
+//   } else {
+//     cb(null, false);
+//     console.log("file type not supported");
+//   }
+// };
+
+// const upload = multer({ storage: file_storage, fileFilter: file_type });
+// module.exports = upload;
+
+const multer = require("multer");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("cloudinary").v2;
+const dotenv = require("dotenv");
+
+dotenv.config();
+
+// cloudinary configuration
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
+});
+
+// Cloudinary storage config
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: (req, file) => {
+    const folder = (file.fieldname = "avatar"
+      ? "avatars"
+      : (file.fieldname = "banner"
+          ? "banners"
+          : (file.fieldname = "video"
+              ? "videos"
+              : (file.fieldname = "img" ? "images" : "default"))));
+
+    const allowedFormat = file.mimetype.startsWith("video/")
+      ? ["mp4", "mov", "avi"]
+      : ["jpeg", "jpg", "webp", "png", "gif"];
+
+    return {
+      folder: folder,
+      allowedFormat: allowedFormat,
+      resource_type: file.mimetype.startsWith("video/") ? "video" : "image",
+    };
   },
 });
 
-const file_type = (req, file, cb) => {
-  if (
-    file.mimetype == "image/png" ||
-    file.mimetype == "image/jpg" ||
-    file.mimetype == "image/jpeg" ||
-    file.mimetype == "image/webp" ||
-    file.mimetype == "image/svg"
-  ) {
+const upload = multer({
+  storage,
+  limits: { fileSize: 1024 * 1024 * 10 }, // limit 10 mb,
+  fileFilter(req, file, cb) {
+    console.log("file details ", file);
+    const allowedTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+      "video/mp4",
+      "video/avi",
+      "video/mov",
+    ];
+    if (!allowedTypes.includes(file.mimetype)) {
+      const error = new Error(
+        "Invalid file type. only JPEG, JPG, WEBP, PNG, GIF, MOV, AVI, MP4"
+      );
+      error.code = "LIMIT_FILE_TYPES";
+      return cb(error);
+    }
     cb(null, true);
-  } else {
-    cb(null, false);
-    console.log("file type not supported");
-  }
+  },
+}).fields([{ name: "avatar" }, { name: "images" }, { name: "img" }]);
+
+// Middleware to handle file uploads, multer errror and log the details
+const uploadMiddleware = (req, res, next) => {
+  upload(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      console.error("Multer error ", err);
+      return res
+        .status(400)
+        .json({ message: "File upload error ", error: err.message });
+    } else if (err) {
+      console.error("Unknown upload error", err);
+      return res
+        .status(400)
+        .json({ message: "File upload error ", error: err.message });
+    }
+    // debug
+    console.log("Resquest body", req.body);
+    console.log("Request files", req.files);
+    next();
+  });
 };
 
-const upload = multer({ storage: file_storage, fileFilter: file_type });
-module.exports = upload;
+module.exports = uploadMiddleware;
