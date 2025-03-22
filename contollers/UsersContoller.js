@@ -82,7 +82,7 @@ const updateUser = async (req, res) => {
     const update = await User.findByIdAndUpdate(id, {
       $set: {
         ...req.body, // Update all fields from req.body
-        avatar: req.file?.path, // Update avatar field with file path
+        avatar: req.files?.avatar[0].path // Update avatar field with file path
       },
     }, { new: true });
 
