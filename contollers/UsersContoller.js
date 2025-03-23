@@ -6,6 +6,8 @@ const createUser = async (req, res) => {
   try {
     const { fullname, email, gender, password } = req.body;
     const new_user = { fullname, email, gender, password };
+    const data = await User.findOne({email})
+    if(data) return res.send({msg: 'This Email Already Existed', status: 400})
     const resp = await User(new_user).save();
     const user_detail = {
       fullname: resp.fullname,
